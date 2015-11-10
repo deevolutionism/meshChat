@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" style="visibility: visible;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style type="text/css">
+	
+</style>
+<head>
+	<title>chatClient</title>
+	<script src="//localhost:8000/socket.io/socket.io.js" type="text/javascript"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+
+	<script type="text/javascript">
+		var socket;
+		var red,blue,green;
+		var longitude;
+		var url='localhost';
+		var port=8000
+		//var url='http//47.18.216.182';
+		//$(document).ready(function(){
+		socket = io.connect(url+':'+port);//create instance of socket io
+
+		//on page load, fetch all previous comments and display them
+		
+
+		function broadcast() { //get user name
+			var message = document.getElementById('message').value
+			socket.emit('getUserName', message); //send message 
+		}
+
+		socket.on('userName', function (data){
+			var node = document.createElement('p');
+			var textNode = document.createTextNode(data.userName + ' says: ' + data.message);
+			node.appendChild(textNode);
+			document.getElementById('chatWindow').appendChild(node);
+			//then commit the message to history
+			socket.emit('toChatHistory', {userName: data.userName, message: data.message});
+			console.log("commiting to history: " + data.userName + ":" + data.message);
+		});
+
+
+		function loadChatHistory() {
+			socket.emit('requestHistory', 'give me the chat history');
+			socket.on('loadChatHistory', function (data){
+				//populate the page with chat history
+				console.log("loaded chat history: " + data);
+
+			});
+		}
+
+
+	</script>
+
+</head>
+<body>
+	<div id = "chatWindow" onload= "loadChatHistory()" ></div>
+	<form>
+		<input id = "message" type = "text" name = "message" placeholder = "message">
+	</form>
+	<button id = "send" onclick="broadcast()">Send</button>
+	<a href="index.html">Log Out</a>
+
+	
+
+</body>
+</html>

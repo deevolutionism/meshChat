@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" style="visibility: visible;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<style type="text/css">
+
+
+	</style>
+	<head>
+		<link rel="stylesheet" type="text/css" href="">
+		<script src="//localhost:8000/socket.io/socket.io.js" type="text/javascript"></script>
+		<title>Login-Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+
+		<script type="text/javascript">
+			var socket;
+			var red,blue,green;
+			var longitude;
+			var url='localhost';
+			var port=8000
+			//var url='http//47.18.216.182';
+			//$(document).ready(function(){
+			socket = io.connect(url+':'+port);//create instance of socket io
+
+			
+
+			function login(){
+				console.log('button pressed');
+				var userName = document.getElementById('email').value;
+				var password = document.getElementById('password').value;
+				socket.emit('login', {userName: userName, password: password});
+				socket.on('proceed', function (data){
+					if(data === 0){//try again
+						var para = document.createElement('p');
+						var node = document.createTextNode('Your email or password is incorrect, try again');
+						para.appendChild(node);
+						var element = document.getElementById("login");
+						element.appendChild(para);
+					} else if(data === 1){//login successful
+						window.location = 'chatClient.html'
+					}
+				});
+
+			}
+
+			
+
+		</script>
+
+
+	</head>
+	<body>
+		<h1 id = "login">LOGIN</h1>
+		<form>
+			<input id = "email" type = "text" name = "user name" placeholder = "user name">
+			<input id = "password" type = "text" name = "password" placeholder = "password" >
+		</form>
+		<button id = "toRedis" onclick="login()">Login</button>
+		<a href = "register.html">Register</a>
+
+	</body>
+</html>
